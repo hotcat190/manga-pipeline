@@ -83,3 +83,4 @@ planning/
 !.env.example
 *.pt
 local_output/
+model/
