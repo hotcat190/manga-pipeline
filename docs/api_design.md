@@ -13,6 +13,7 @@
         "vi",
         "en"
     ],
+    "comic_type": "manga",
     "webhook_url": "https://api.yourdomain.com/internal/pipeline-callback"
 }
 ```

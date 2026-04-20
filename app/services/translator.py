@@ -19,7 +19,7 @@ class MangaTranslator:
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel('gemini-3.1-flash-lite-preview')
 
-    def translate_batch(self, metadata: List[Dict], target_lang: str) -> Tuple[Dict, Dict]:
+    def translate_batch(self, metadata: List[Dict], target_lang: str) -> tuple[Dict, Dict]:
         page_context = " ".join([item["original_text"] for item in metadata])
         
         original_data = []

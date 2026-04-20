@@ -2,7 +2,7 @@ import os
 from typing import Dict
 from app.engines.factory import OcrFactory
 from app.services.translator import MangaTranslator
-from app.services.storage import StorageService
+from app.services.storage import BaseStorageService, StorageService
 
 ocr_engines = {
     'manga': None,
@@ -13,14 +13,16 @@ def init_engines():
     ocr_engines['manga'] = OcrFactory.get_engine('manga')
     ocr_engines['webtoon'] = OcrFactory.get_engine('webtoon')
 
-def process_job(job_payload: Dict) -> Dict:
+def process_job(job_payload: Dict, storage: BaseStorageService = None) -> Dict:
     comic_type = job_payload.get("comic_type", "manga")
     engine = ocr_engines.get(comic_type)
     
     translator = MangaTranslator(api_key=os.environ.get("GEMINI_API_KEY"))
-    storage = StorageService(bucket_name="manga-assets")
     
-    image_path = "/tmp/downloaded_image.jpg"
+    if storage is None:
+        storage = StorageService(bucket_name=job_payload.get("bucket_name", "manga-assets"))
+    
+    image_path = job_payload.get("image_path", "/tmp/downloaded_image.jpg")
     
     cleaned_img, metadata = engine.process(image_path)
     

@@ -1,0 +1,27 @@
+# Cơ bản & Xử lý ảnh
+numpy==1.26.4
+Pillow
+opencv-python
+shapely
+pyclipper
+tqdm
+
+# Deep Learning Frameworks
+torch
+torchvision
+torchaudio
+torchsummary
+
+# OCR & Inpainting
+manga-ocr
+simple-lama-inpainting
+ultralytics
+
+# AI & API
+google-generativeai
+pydantic
+python-dotenv
+
+# Tiện ích
+wandb
+requests

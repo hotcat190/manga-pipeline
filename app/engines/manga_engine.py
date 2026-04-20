@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 from functools import cmp_to_key
 from typing import Tuple, List, Dict
+import torch
 
 from comic_text_detector.inference import TextDetector
 from manga_ocr import MangaOcr
@@ -10,10 +11,13 @@ from simple_lama_inpainting import SimpleLama
 from ultralytics import YOLO
 from .base import BaseOcrEngine
 
+torch.backends.cudnn.enabled = False
+
 class MangaOcrEngine(BaseOcrEngine):
     def __init__(self):
         self.panel_detector = YOLO("yolov12x_panels.pt")
-        self.text_detector = TextDetector(model_path="comictextdetector.pt", device="cuda", act='leaky')
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.text_detector = TextDetector(model_path="comictextdetector.pt", device=device, act='leaky')
         self.mocr = MangaOcr()
         self.lama = SimpleLama()
 
