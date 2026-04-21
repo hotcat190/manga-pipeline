@@ -35,7 +35,7 @@ def process_job(job_payload: Dict, storage: BaseStorageService = None) -> Dict:
     }
     
     for lang in job_payload["target_langs"]:
-        orig_data, trans_data = translator.translate_batch(metadata, target_lang=lang)
+        orig_data, trans_data = translator.translate_batch(metadata, source_lang=job_payload["source_lang"], target_lang=lang)
         
         if not original_metadata_full["bubbles"]:
             original_metadata_full["bubbles"] = orig_data

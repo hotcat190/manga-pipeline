@@ -31,11 +31,12 @@ def run_local_test(image_filename):
         "page_id": "page_01",
         "image_path": image_path,
         "source_lang": "ja",
-        "target_langs": ["vi"],
+        "target_langs": ["en"],
         "comic_type": "manga"
     }
     
     print("-> Bắt đầu xử lý Job...")
+    print(f"Job config: \n{json.dumps(test_job, indent=2, ensure_ascii=False)}")
     try:
         result = process_job(test_job, storage=local_storage)
         print("\n✅ HOÀN THÀNH! Kết quả JSON trả về:")
