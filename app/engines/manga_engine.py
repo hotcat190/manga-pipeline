@@ -15,9 +15,9 @@ torch.backends.cudnn.enabled = False
 
 class MangaOcrEngine(BaseOcrEngine):
     def __init__(self):
-        self.panel_detector = YOLO("yolov12x_panels.pt")
+        self.panel_detector = YOLO("models/yolov12x_panels.pt")
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.text_detector = TextDetector(model_path="comictextdetector.pt", device=device, act='leaky')
+        self.text_detector = TextDetector(model_path="models/comictextdetector.pt", device=device, act='leaky')
         self.mocr = MangaOcr()
         self.lama = SimpleLama()
 
