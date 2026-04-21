@@ -22,6 +22,14 @@ google-generativeai
 pydantic
 python-dotenv
 
+# NLP
+sudachipy
+sudachidict_full
+pykakasi
+
 # Tiện ích
 wandb
 requests
+
+# Test
+pytest
