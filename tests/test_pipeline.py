@@ -3,6 +3,7 @@ import sys
 import json
 import argparse
 from dotenv import load_dotenv
+from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -21,7 +22,9 @@ def run_local_test(image_filename):
         print(f"Lỗi: Không tìm thấy ảnh tại {image_path}")
         return
         
-    local_storage = LocalStorageService(output_dir=os.path.join(base_dir, "local_output"))
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    output_dir = os.path.join(base_dir, "local_output", timestamp)
+    local_storage = LocalStorageService(output_dir=output_dir)
     
     test_job = {
         "job_id": "test_001",
