@@ -10,14 +10,15 @@ from manga_ocr import MangaOcr
 from simple_lama_inpainting import SimpleLama
 from ultralytics import YOLO
 from .base import BaseOcrEngine
+from app.core.config import settings
 
 torch.backends.cudnn.enabled = False
 
 class MangaOcrEngine(BaseOcrEngine):
     def __init__(self):
-        self.panel_detector = YOLO("models/yolov12x_panels.pt")
+        self.panel_detector = YOLO(settings.PANEL_MODEL_PATH)
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.text_detector = TextDetector(model_path="models/comictextdetector.pt", device=device, act='leaky')
+        self.text_detector = TextDetector(model_path=settings.TEXT_DETECTION_MODEL_PATH, device=device, act='leaky')
         self.mocr = MangaOcr()
         self.lama = SimpleLama()
 

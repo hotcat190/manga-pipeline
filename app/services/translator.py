@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Dict
 from app.core.utils import get_full_lang_name
 from app.services.nlp import NLPAnalyzer, DictionaryLookup
+from app.core.config import settings
 
 class TranslatedItem(BaseModel):
     id: int
@@ -13,9 +14,10 @@ class BatchTranslationResult(BaseModel):
     translations: List[TranslatedItem]
 
 class MangaTranslator:
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
+        api_key = api_key or settings.GEMINI_API_KEY
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-3.1-flash-lite-preview')
+        self.model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
         self.nlp = NLPAnalyzer()
         self.dictionary = DictionaryLookup()
 

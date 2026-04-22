@@ -20,6 +20,7 @@ ultralytics
 # AI & API
 google-generativeai
 pydantic
+pydantic-settings
 python-dotenv
 
 # NLP

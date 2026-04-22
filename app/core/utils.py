@@ -1,18 +1,7 @@
-lang_code_map = {
-    'vi': 'Vietnamese',
-    'en': 'English',
-    'ja': 'Japanese',
-    'ko': 'Korean',
-    'zh': 'Chinese',
-    'es': 'Spanish',
-    'fr': 'French',
-    'de': 'German',
-    'th': 'Thai',
-    'id': 'Indonesian'
-}
+from app.core.constants import LANG_CODE_MAP
 
 def get_full_lang_name(lang_code: str) -> str:
-    return lang_code_map.get(lang_code.lower(), lang_code)
+    return LANG_CODE_MAP.get(lang_code.lower(), lang_code)
 
 def get_few_shot_example(lang_code: str) -> str:
     lang = lang_code.lower()

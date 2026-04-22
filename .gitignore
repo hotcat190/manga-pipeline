@@ -84,3 +84,4 @@ planning/
 *.pt
 local_output/
 model/
+.agents/
