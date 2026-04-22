@@ -85,3 +85,4 @@ planning/
 local_output/
 model/
 .agents/
+tests/assets/
