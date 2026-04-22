@@ -1,5 +1,5 @@
 from .base import BaseOcrEngine
-from .manga_engine import MangaOcrEngine
+from .manga.engine import MangaOcrEngine
 from .webtoon_engine import WebtoonOcrEngine
 
 class OcrFactory:

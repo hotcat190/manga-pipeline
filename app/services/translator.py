@@ -1,10 +1,14 @@
 import json
+import logging
 import google.generativeai as genai
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from app.core.utils import get_full_lang_name
 from app.services.nlp import NLPAnalyzer, DictionaryLookup
 from app.core.config import settings
+from app.services.prompts import TRANSLATION_PROMPT_TEMPLATE
+
+logger = logging.getLogger(__name__)
 
 class TranslatedItem(BaseModel):
     id: int
@@ -21,8 +25,8 @@ class MangaTranslator:
         self.nlp = NLPAnalyzer()
         self.dictionary = DictionaryLookup()
 
-    def translate_batch(self, metadata: List[Dict], source_lang: str, target_lang: str) -> tuple[List[Dict], List[Dict]]:
-        print("Bắt đầu pipeline dịch thuật")
+    def translate_batch(self, metadata: List[Dict], source_lang: str, target_lang: str) -> Tuple[List[Dict], List[Dict]]:
+        logger.info(f"Starting translation pipeline: {source_lang} -> {target_lang}")
         full_source_lang = get_full_lang_name(source_lang)
         full_target_lang = get_full_lang_name(target_lang)
         
@@ -63,13 +67,11 @@ class MangaTranslator:
             })
 
         lines_to_translate = "\n".join([f"[{item['id']}] {item['original_text']}" for item in valid_items])
-        prompt = f"""
-        You are an expert manga/webtoon translator. Translate the following {full_source_lang} dialogue lines into highly idiomatic {full_target_lang}.
-        Context is provided by all the lines together. Match the character's tone and infer missing subjects naturally.
-        
-        INPUT TEXT:
-        {lines_to_translate}
-        """
+        prompt = TRANSLATION_PROMPT_TEMPLATE.format(
+            source_lang=full_source_lang,
+            target_lang=full_target_lang,
+            input_text=lines_to_translate
+        )
         
         try:
             response = self.model.generate_content(
@@ -85,8 +87,14 @@ class MangaTranslator:
             translation_map = {t["id"]: t["full_translation"] for t in result.get("translations", [])}
             for t_data in translation_data:
                 t_data["full_translation"] = translation_map.get(t_data["id"], "")
+            
+            logger.info(f"Successfully translated {len(valid_items)} items")
                 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error(f"Translation failed: {str(e)}")
+            # Fallback: keep original text or empty
+            for t_data in translation_data:
+                if not t_data["full_translation"]:
+                    t_data["full_translation"] = "[Translation Error]"
                 
         return original_data, translation_data
