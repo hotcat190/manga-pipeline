@@ -1,12 +1,12 @@
 import numpy as np
 from ultralytics import YOLO
 from typing import List, Dict
-from .panel_sorter import PanelSorter
+from .bounding_box_sorter import BoundingBoxSorter
 
 class PanelDetector:
     def __init__(self, model_path: str):
         self.model = YOLO(model_path)
-        self.sorter = PanelSorter()
+        self.sorter = BoundingBoxSorter()
 
     def detect_and_sort(self, img_path: str) -> List[Dict]:
         results = self.model.predict(img_path, conf=0.3, verbose=False)

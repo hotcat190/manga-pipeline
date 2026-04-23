@@ -3,27 +3,27 @@ from collections import defaultdict
 from typing import List, Dict
 from src.core.visual_debugger import VisualDebugger
 
-class PanelSorter:
+class BoundingBoxSorter:
     """
-    Handles sorting of manga panels based on their spatial coordinates using a recursive XY cut algorithm.
+    Handles sorting of manga panels/texts bounding boxes based on their spatial coordinates using a recursive XY cut algorithm.
     """
     
-    def sort(self, panels: List[Dict]) -> List[Dict]:
+    def sort(self, boxes: List[Dict]) -> List[Dict]:
         """
-        Sorts panels using a recursive XY cut algorithm.
+        Sorts boxes using a recursive XY cut algorithm.
         
         Args:
-            panels: List of panel dictionaries containing 'box', 'cx', and 'cy'.
+            boxes: List of boxes containing 'box'.
             
         Returns:
-            List[Dict]: The sorted list of panels.
+            List[Dict]: The sorted list of boxes.
         """
-        if not panels:
+        if not boxes:
             return []
             
         # 1. Dynamic Metrics for relative thresholds
-        widths = [p['box'][2] - p['box'][0] for p in panels]
-        heights = [p['box'][3] - p['box'][1] for p in panels]
+        widths = [p['box'][2] - p['box'][0] for p in boxes]
+        heights = [p['box'][3] - p['box'][1] for p in boxes]
         median_w = statistics.median(widths) if widths else 0
         median_h = statistics.median(heights) if heights else 0
         
@@ -31,13 +31,13 @@ class PanelSorter:
         y_overlap_threshold = 0.25 
         
         # 2. Containment Analysis (Encapsulation)
-        # Find panels that are inside other panels
+        # Find boxes that are inside other boxes
         parent_indices = []
         children_map = defaultdict(list) # parent_idx -> list of child_indices
         
-        for i, p1 in enumerate(panels):
+        for i, p1 in enumerate(boxes):
             is_child = False
-            for j, p2 in enumerate(panels):
+            for j, p2 in enumerate(boxes):
                 if i == j: continue
                 if self._is_contained(p1['box'], p2['box']):
                     children_map[j].append(i)
@@ -47,23 +47,23 @@ class PanelSorter:
                 parent_indices.append(i)
                 
         # 3. Sort parent panels using Recursive XY Cut
-        parent_data = [{'original_idx': i, 'box': panels[i]['box']} for i in parent_indices]
+        parent_data = [{'original_idx': i, 'box': boxes[i]['box']} for i in parent_indices]
         sorted_parent_data = self._recursive_xy_cut(parent_data)
         
         # 4. Final Sequence with Children
-        result_panels = []
+        result_boxes = []
         for item in sorted_parent_data:
             idx = item['original_idx']
-            result_panels.append(panels[idx])
-            # Add and sort children of this panel
+            result_boxes.append(boxes[idx])
+            # Add and sort children of this box
             if idx in children_map:
                 child_indices = children_map[idx]
                 # Sort children: top-to-bottom, then right-to-left
-                child_indices.sort(key=lambda c_idx: (panels[c_idx]['box'][1], -panels[c_idx]['box'][2]))
+                child_indices.sort(key=lambda c_idx: (boxes[c_idx]['box'][1], -boxes[c_idx]['box'][2]))
                 for c_idx in child_indices:
-                    result_panels.append(panels[c_idx])
+                    result_boxes.append(boxes[c_idx])
                     
-        return result_panels
+        return result_boxes
 
     def _recursive_xy_cut(self, data: List[Dict]) -> List[Dict]:
         if len(data) <= 1:

@@ -1,5 +1,5 @@
 import pytest
-from src.engines.manga.panel_sorter import PanelSorter
+from src.engines.manga.panel_sorter import BoundingBoxSorter
 from src.core.visual_debugger import VisualDebugger
 
 @pytest.fixture(autouse=True)
@@ -11,7 +11,7 @@ def enable_visual_debug(monkeypatch, request):
     VisualDebugger.CURRENT_CONTEXT = None
 
 def test_empty_panels():
-    sorter = PanelSorter()
+    sorter = BoundingBoxSorter()
     assert sorter.sort([]) == []
 
 def test_standard_grid():
@@ -22,7 +22,7 @@ def test_standard_grid():
         {'box': [100, 100, 200, 200]}, # bottom-right
         {'box': [0, 100, 100, 200]}    # bottom-left
     ]
-    sorter = PanelSorter()
+    sorter = BoundingBoxSorter()
     sorted_panels = sorter.sort(panels)
 
     # Debug visualization        
@@ -40,7 +40,7 @@ def test_nested_panels():
         {'box': [50, 50, 100, 100]}, # Panel 1: Nested inside 0
         {'box': [210, 0, 300, 200]}  # Panel 2: To the right of Panel 0 (should come first)
     ]
-    sorter = PanelSorter()
+    sorter = BoundingBoxSorter()
     sorted_panels = sorter.sort(panels)
 
     # Debug visualization        
@@ -59,7 +59,7 @@ def test_l_shape_non_transitive():
         {'box': [110, 0, 200, 90]},  # 1: Small top-right
         {'box': [110, 110, 200, 200]} # 2: Small bottom-right
     ]
-    sorter = PanelSorter()
+    sorter = BoundingBoxSorter()
     sorted_panels = sorter.sort(panels)
 
     # Debug visualization        
@@ -76,7 +76,7 @@ def test_dynamic_thresholds():
         {'box': [1005, 0, 2000, 1000]}, # 0: Right
         {'box': [0, 5, 1000, 1005]}      # 1: Left (slightly offset but same row)
     ]
-    sorter = PanelSorter()
+    sorter = BoundingBoxSorter()
     sorted_panels = sorter.sort(panels)
 
     # Debug visualization        
@@ -102,7 +102,7 @@ def test_4koma_layout():
         {'box': [50, 1300, 450, 1600]}   # L4
     ]
     
-    sorter = PanelSorter()
+    sorter = BoundingBoxSorter()
     sorted_panels = sorter.sort(panels)
 
     # Debug visualization        

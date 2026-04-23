@@ -12,6 +12,7 @@ from src.engines.base import BaseOcrEngine
 from src.core.config import settings
 from .panel_detector import PanelDetector
 from .text_processor import TextProcessor
+from .bounding_box_sorter import BoundingBoxSorter
 from src.core.visual_debugger import VisualDebugger
 
 class MangaOcrEngine(BaseOcrEngine):
