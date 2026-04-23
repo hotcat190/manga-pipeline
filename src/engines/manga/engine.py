@@ -9,11 +9,11 @@ from manga_ocr import MangaOcr
 from simple_lama_inpainting import SimpleLama
 
 from src.engines.base import BaseOcrEngine
-from src.core.config import settings
+from src.common.config import settings
 from .panel_detector import PanelDetector
 from .text_processor import TextProcessor
 from .bounding_box_sorter import BoundingBoxSorter
-from src.core.visual_debugger import VisualDebugger
+from src.common.visual_debugger import VisualDebugger
 
 class MangaOcrEngine(BaseOcrEngine):
     def __init__(self):

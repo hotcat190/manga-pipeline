@@ -3,7 +3,7 @@ from typing import Dict, Optional
 from src.engines.factory import OcrFactory
 from src.services.translator import MangaTranslator
 from src.services.storage import BaseStorageService, StorageService
-from src.core.config import settings
+from src.common.config import settings
 
 # Configure logging
 logging.basicConfig(

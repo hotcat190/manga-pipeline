@@ -3,9 +3,9 @@ import logging
 import google.generativeai as genai
 from pydantic import BaseModel
 from typing import List, Dict, Tuple
-from src.core.utils import get_full_lang_name
+from src.common.utils import get_full_lang_name
+from src.common.config import settings
 from src.services.nlp import NLPAnalyzer, DictionaryLookup
-from src.core.config import settings
 from src.services.prompts import TRANSLATION_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)

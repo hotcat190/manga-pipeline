@@ -1,7 +1,6 @@
 import statistics
 from collections import defaultdict
 from typing import List, Dict
-from src.core.visual_debugger import VisualDebugger
 
 class BoundingBoxSorter:
     """
