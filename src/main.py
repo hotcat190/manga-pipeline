@@ -1,9 +1,9 @@
 import logging
 from typing import Dict, Optional
-from app.engines.factory import OcrFactory
-from app.services.translator import MangaTranslator
-from app.services.storage import BaseStorageService, StorageService
-from app.core.config import settings
+from src.engines.factory import OcrFactory
+from src.services.translator import MangaTranslator
+from src.services.storage import BaseStorageService, StorageService
+from src.core.config import settings
 
 # Configure logging
 logging.basicConfig(
@@ -102,9 +102,6 @@ class MangaPipeline:
                 "status": "FAILED",
                 "error": str(e)
             }
-
-# Singleton instance for simple usage
-pipeline = MangaPipeline()
 
 def process_job(job_payload: Dict) -> Dict:
     """Wrapper function to maintain backward compatibility if needed."""

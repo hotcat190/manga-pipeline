@@ -8,8 +8,8 @@ from comic_text_detector.inference import TextDetector
 from manga_ocr import MangaOcr
 from simple_lama_inpainting import SimpleLama
 
-from app.engines.base import BaseOcrEngine
-from app.core.config import settings
+from src.engines.base import BaseOcrEngine
+from src.core.config import settings
 from .panel_detector import PanelDetector
 from .text_processor import TextProcessor
 from src.core.visual_debugger import VisualDebugger

@@ -3,10 +3,10 @@ import logging
 import google.generativeai as genai
 from pydantic import BaseModel
 from typing import List, Dict, Tuple
-from app.core.utils import get_full_lang_name
-from app.services.nlp import NLPAnalyzer, DictionaryLookup
-from app.core.config import settings
-from app.services.prompts import TRANSLATION_PROMPT_TEMPLATE
+from src.core.utils import get_full_lang_name
+from src.services.nlp import NLPAnalyzer, DictionaryLookup
+from src.core.config import settings
+from src.services.prompts import TRANSLATION_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,9 @@ class MangaTranslator:
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json",
                     response_schema=BatchTranslationResult,
-                    temperature=1
+                    temperature=1,
+                    top_p=0.95,
+                    top_k=64,
                 )
             )
             result = json.loads(response.text)

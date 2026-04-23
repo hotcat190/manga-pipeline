@@ -7,12 +7,11 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app.main import init_engines, process_job
-from app.services.storage import LocalStorageService
+from src.main import MangaPipeline
+from src.services.storage import LocalStorageService
 
 def run_local_test(image_filename):
     print("-> Đang khởi tạo các Engine OCR...")
-    init_engines()
     
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     assets_dir = os.path.join(base_dir, 'tests', 'assets')
@@ -38,7 +37,8 @@ def run_local_test(image_filename):
     print("-> Bắt đầu xử lý Job...")
     print(f"Job config: \n{json.dumps(test_job, indent=2, ensure_ascii=False)}")
     try:
-        result = process_job(test_job, storage=local_storage)
+        pipeline = MangaPipeline(storage_service=local_storage)
+        result = pipeline.process_job(test_job)
         print("\n✅ HOÀN THÀNH! Kết quả JSON trả về:")
         print(json.dumps(result, indent=2, ensure_ascii=False))
         print(f"\n📂 Hãy kiểm tra thư mục 'local_output' để xem ảnh và file metadata.")

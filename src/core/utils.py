@@ -1,4 +1,4 @@
-from app.core.constants import LANG_CODE_MAP
+from src.core.constants import LANG_CODE_MAP
 
 def get_full_lang_name(lang_code: str) -> str:
     return LANG_CODE_MAP.get(lang_code.lower(), lang_code)
