@@ -12,6 +12,7 @@ from app.engines.base import BaseOcrEngine
 from app.core.config import settings
 from .panel_detector import PanelDetector
 from .text_processor import TextProcessor
+from src.core.visual_debugger import VisualDebugger
 
 class MangaOcrEngine(BaseOcrEngine):
     def __init__(self):
@@ -34,6 +35,7 @@ class MangaOcrEngine(BaseOcrEngine):
 
         # 1. Detect and sort panels
         panels = self.panel_detector.detect_and_sort(image_path)
+        VisualDebugger.visualize_panels(panels, image=img_rgb, name="pipeline_panels")
         
         # 2. Detect text blocks
         mask_raw, _, blk_list_raw = self.text_detector(img_cv, refine_mode=1, keep_undetected_mask=True)
@@ -81,5 +83,7 @@ class MangaOcrEngine(BaseOcrEngine):
         # 7. Inpaint
         mask_pil = Image.fromarray(final_solid_mask)
         cleaned_img = self.lama(img_pil, mask_pil)
+
+        VisualDebugger.visualize_text_blocks(metadata, image=img_rgb, name="pipeline_text_blocks")
 
         return cleaned_img, metadata
