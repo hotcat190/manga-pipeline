@@ -43,41 +43,54 @@ class MangaPipeline:
             
             # 3. Upload Cleaned Image
             img_url = self.storage.upload_image(cleaned_img, f"processed/{job_id}/clean.jpg")
-            
-            # 4. Handle Translations
+
+            # 4. (Optional) Skip translation
+            skip_translate = job_payload.get("skip_translate", False)
+            if skip_translate:
+                logger.info(f"Job {job_id}: skip_translate=True, skipping translation step")
+                return {
+                    "job_id": job_id,
+                    "status": "COMPLETED",
+                    "result": {
+                        "inpainted_image_url": img_url,
+                        "metadata": None
+                    }
+                }
+
+            # 5. Handle Translations
             final_translations = {}
             original_metadata_full = {
                 "page_id": page_id,
                 "bubbles": []
             }
-            
+
             source_lang = job_payload.get("source_lang", "ja")
             target_langs = job_payload.get("target_langs", ["vi"])
 
             for lang in target_langs:
                 orig_data, trans_data = self.translator.translate_batch(
-                    metadata, 
-                    source_lang=source_lang, 
+                    metadata,
+                    source_lang=source_lang,
                     target_lang=lang
                 )
-                
+
                 if not original_metadata_full["bubbles"]:
                     original_metadata_full["bubbles"] = orig_data
-                    
+
                 trans_metadata_full = {
                     "page_id": page_id,
                     "bubbles": trans_data
                 }
-                
+
                 trans_url = self.storage.upload_json(
-                    trans_metadata_full, 
+                    trans_metadata_full,
                     f"metadata/{job_id}/trans_{lang}.json"
                 )
                 final_translations[lang] = trans_url
-                
-            # 5. Upload Original Metadata
+
+            # 6. Upload Original Metadata
             orig_url = self.storage.upload_json(
-                original_metadata_full, 
+                original_metadata_full,
                 f"metadata/{job_id}/original.json"
             )
             

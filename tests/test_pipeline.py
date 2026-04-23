@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.main import MangaPipeline
 from src.services.storage import LocalStorageService
 
-def run_local_test(image_filename):
+def run_local_test(image_filename, skip_translate=False):
     print("-> Đang khởi tạo các Engine OCR...")
     
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -31,7 +31,8 @@ def run_local_test(image_filename):
         "image_path": image_path,
         "source_lang": "ja",
         "target_langs": ["en"],
-        "comic_type": "manga"
+        "comic_type": "manga",
+        "skip_translate": skip_translate,
     }
     
     print("-> Bắt đầu xử lý Job...")
@@ -48,6 +49,7 @@ def run_local_test(image_filename):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test Manga Pipeline")
     parser.add_argument("--image", type=str, default="0008.jpg", help="Tên file ảnh trong thư mục tests/assets/")
+    parser.add_argument("--no-translate", action="store_true", help="Bỏ qua bước dịch thuật (chỉ chạy OCR + inpainting)")
     args = parser.parse_args()
 
     env_path = os.path.join(os.path.dirname(__file__), '..', '.env.local.test')
@@ -56,6 +58,6 @@ if __name__ == "__main__":
     if not os.environ.get("GEMINI_API_KEY"):
         print("⚠️ CẢNH BÁO: Chưa set GEMINI_API_KEY. Vui lòng thiết lập biến môi trường này trước khi chạy.")
     else:
-        run_local_test(args.image)
+        run_local_test(args.image, skip_translate=args.no_translate)
 
     

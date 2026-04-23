@@ -86,3 +86,4 @@ local_output/
 models/
 .agents/
 tests/assets/
+_local_playground/

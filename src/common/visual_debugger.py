@@ -94,7 +94,7 @@ class VisualDebugger:
             cv2.rectangle(canvas, (x, y), (x + w, y + h), (255, 0, 0), 2)
             cv2.putText(
                 canvas, str(i+1), (x + 2, y + 15), 
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1
             )
 
         timestamp = datetime.now().strftime("%H%M%S")
