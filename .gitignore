@@ -83,6 +83,6 @@ planning/
 !.env.example
 *.pt
 local_output/
-model/
+models/
 .agents/
 tests/assets/
