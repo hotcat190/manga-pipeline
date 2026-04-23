@@ -28,6 +28,7 @@ def run_local_test(image_filename, source_lang="ja", target_langs=["en"], comic_
     test_job = {
         "job_id": "test_001",
         "page_id": "page_01",
+        "chapter_id": "chapter_01",
         "image_path": image_path,
         "source_lang": source_lang,
         "target_langs": target_langs,

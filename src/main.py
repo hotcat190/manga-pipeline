@@ -25,6 +25,7 @@ class MangaPipeline:
     def process_job(self, job_payload: Dict) -> Dict:
         job_id = job_payload.get("job_id")
         page_id = job_payload.get("page_id")
+        chapter_id = job_payload.get("chapter_id")
         comic_type = job_payload.get("comic_type", "manga")
         
         logger.info(f"Processing job {job_id} (Type: {comic_type}, Page: {page_id})")
@@ -52,6 +53,8 @@ class MangaPipeline:
                 return {
                     "job_id": job_id,
                     "status": "COMPLETED",
+                    "page_id": page_id,
+                    "chapter_id": chapter_id,
                     "result": {
                         "inpainted_image_url": img_url,
                         "metadata": None
@@ -105,6 +108,8 @@ class MangaPipeline:
             return {
                 "job_id": job_id,
                 "status": "COMPLETED",
+                "page_id": page_id,
+                "chapter_id": chapter_id,
                 "result": {
                     "inpainted_image_url": img_url,
                     "metadata": {
@@ -119,6 +124,8 @@ class MangaPipeline:
             return {
                 "job_id": job_id,
                 "status": "FAILED",
+                "page_id": page_id,
+                "chapter_id": chapter_id,
                 "error": str(e)
             }
 
