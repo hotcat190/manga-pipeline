@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.main import MangaPipeline
 from src.services.storage import LocalStorageService
 
-def run_local_test(image_filename, skip_translate=False):
+def run_local_test(image_filename, source_lang="ja", target_langs=["en"], comic_type="manga", skip_translate=False):
     print("-> Đang khởi tạo các Engine OCR...")
     
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -29,9 +29,9 @@ def run_local_test(image_filename, skip_translate=False):
         "job_id": "test_001",
         "page_id": "page_01",
         "image_path": image_path,
-        "source_lang": "ja",
-        "target_langs": ["en"],
-        "comic_type": "manga",
+        "source_lang": source_lang,
+        "target_langs": target_langs,
+        "comic_type": comic_type,
         "skip_translate": skip_translate,
     }
     
@@ -49,6 +49,9 @@ def run_local_test(image_filename, skip_translate=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test Manga Pipeline")
     parser.add_argument("--image", type=str, default="0008.jpg", help="Tên file ảnh trong thư mục tests/assets/")
+    parser.add_argument("--source-lang", type=str, default="ja", help="Ngôn ngữ gốc")
+    parser.add_argument("--target-langs", nargs="*", default=["en"], help="Danh ngôn ngữ đích, ngăn cách bởi dấu \" \"")
+    parser.add_argument("--comic-type", type=str, default="manga")
     parser.add_argument("--no-translate", action="store_true", help="Bỏ qua bước dịch thuật (chỉ chạy OCR + inpainting)")
     args = parser.parse_args()
 
@@ -58,6 +61,6 @@ if __name__ == "__main__":
     if not os.environ.get("GEMINI_API_KEY"):
         print("⚠️ CẢNH BÁO: Chưa set GEMINI_API_KEY. Vui lòng thiết lập biến môi trường này trước khi chạy.")
     else:
-        run_local_test(args.image, skip_translate=args.no_translate)
+        run_local_test(args.image, source_lang=args.source_lang, target_langs=args.target_langs, comic_type=args.comic_type, skip_translate=args.no_translate)
 
     

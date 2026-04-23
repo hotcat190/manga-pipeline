@@ -1,6 +1,6 @@
 import pytest
-from src.engines.manga.panel_sorter import BoundingBoxSorter
-from src.core.visual_debugger import VisualDebugger
+from src.engines.manga.bounding_box_sorter import BoundingBoxSorter
+from src.common.visual_debugger import VisualDebugger
 
 @pytest.fixture(autouse=True)
 def enable_visual_debug(monkeypatch, request):
@@ -73,8 +73,8 @@ def test_dynamic_thresholds():
     # Tiny gap that should be ignored by dynamic thresholds
     # Large high-res panels
     panels = [
-        {'box': [1005, 0, 2000, 1000]}, # 0: Right
-        {'box': [0, 5, 1000, 1005]}      # 1: Left (slightly offset but same row)
+        {'box': [1005, 5, 2000, 1000]}, # 0: Right
+        {'box': [0, 0, 1000, 905]}      # 1: Left (slightly offset but same row)
     ]
     sorter = BoundingBoxSorter()
     sorted_panels = sorter.sort(panels)
@@ -82,8 +82,8 @@ def test_dynamic_thresholds():
     # Debug visualization        
     VisualDebugger.visualize_panels(sorted_panels)
     
-    assert sorted_panels[0]['box'] == [1005, 0, 2000, 1000]
-    assert sorted_panels[1]['box'] == [0, 5, 1000, 1005]
+    assert sorted_panels[0]['box'] == [1005, 5, 2000, 1000]
+    assert sorted_panels[1]['box'] == [0, 0, 1000, 905]
 
 def test_4koma_layout():
     # 8 panels, 2 columns. Page 1000x1600.
