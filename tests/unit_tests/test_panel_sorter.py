@@ -24,6 +24,9 @@ def test_standard_grid():
     ]
     sorter = PanelSorter()
     sorted_panels = sorter.sort(panels)
+
+    # Debug visualization        
+    VisualDebugger.visualize_panels(sorted_panels)
     
     assert sorted_panels[0]['box'] == [100, 0, 200, 100]
     assert sorted_panels[1]['box'] == [0, 0, 100, 100]
@@ -39,6 +42,9 @@ def test_nested_panels():
     ]
     sorter = PanelSorter()
     sorted_panels = sorter.sort(panels)
+
+    # Debug visualization        
+    VisualDebugger.visualize_panels(sorted_panels)
     
     # Expected: Panel 2 (rightmost), then Panel 0 (parent), then Panel 1 (child)
     assert sorted_panels[0]['box'] == [210, 0, 300, 200]
@@ -55,6 +61,9 @@ def test_l_shape_non_transitive():
     ]
     sorter = PanelSorter()
     sorted_panels = sorter.sort(panels)
+
+    # Debug visualization        
+    VisualDebugger.visualize_panels(sorted_panels)
     
     assert sorted_panels[0]['box'] == [110, 0, 200, 90]
     assert sorted_panels[1]['box'] == [110, 110, 200, 200]
@@ -69,6 +78,9 @@ def test_dynamic_thresholds():
     ]
     sorter = PanelSorter()
     sorted_panels = sorter.sort(panels)
+
+    # Debug visualization        
+    VisualDebugger.visualize_panels(sorted_panels)
     
     assert sorted_panels[0]['box'] == [1005, 0, 2000, 1000]
     assert sorted_panels[1]['box'] == [0, 5, 1000, 1005]
@@ -92,6 +104,9 @@ def test_4koma_layout():
     
     sorter = PanelSorter()
     sorted_panels = sorter.sort(panels)
+
+    # Debug visualization        
+    VisualDebugger.visualize_panels(sorted_panels)
     
     # Expected: R1, R2, R3, R4, L1, L2, L3, L4
     expected_order = [

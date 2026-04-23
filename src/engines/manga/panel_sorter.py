@@ -62,9 +62,6 @@ class PanelSorter:
                 child_indices.sort(key=lambda c_idx: (panels[c_idx]['box'][1], -panels[c_idx]['box'][2]))
                 for c_idx in child_indices:
                     result_panels.append(panels[c_idx])
-        
-        # Debug visualization        
-        VisualDebugger.visualize_panels(result_panels)
                     
         return result_panels
 
