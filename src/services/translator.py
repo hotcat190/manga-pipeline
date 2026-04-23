@@ -3,16 +3,24 @@ import logging
 import google.generativeai as genai
 from pydantic import BaseModel
 from typing import List, Dict, Tuple
+from PIL import Image
 from src.common.utils import get_full_lang_name
 from src.common.config import settings
-from src.services.nlp import NLPAnalyzer, DictionaryLookup
 from src.services.prompts import TRANSLATION_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
+class ChunkItem(BaseModel):
+    chunk_id: str
+    word: str
+    romaji: str
+    type: str
+    meaning_in_context: str
+
 class TranslatedItem(BaseModel):
     id: int
     full_translation: str
+    chunks: List[ChunkItem]
 
 class BatchTranslationResult(BaseModel):
     translations: List[TranslatedItem]
@@ -22,10 +30,8 @@ class MangaTranslator:
         api_key = api_key or settings.GEMINI_API_KEY
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(settings.GEMINI_MODEL_NAME)
-        self.nlp = NLPAnalyzer()
-        self.dictionary = DictionaryLookup()
 
-    def translate_batch(self, metadata: List[Dict], source_lang: str, target_lang: str) -> Tuple[List[Dict], List[Dict]]:
+    def translate_batch(self, metadata: List[Dict], som_image: Image.Image, source_lang: str, target_lang: str) -> Tuple[List[Dict], List[Dict]]:
         logger.info(f"Starting translation pipeline: {source_lang} -> {target_lang}")
         full_source_lang = get_full_lang_name(source_lang)
         full_target_lang = get_full_lang_name(target_lang)
@@ -35,35 +41,15 @@ class MangaTranslator:
         valid_items = [item for item in metadata if item["original_text"].strip()]
 
         print("2. Bắt đầu dịch thuật chuyên sâu (Tap-to-Translate Pipeline)...\n")
-        for item in valid_items:
-            text = item["original_text"]
-            chunks = self.nlp.analyze(text, source_lang)
-
-            original_chunks = []
-            chunk_meanings = []
-            
-            for idx, chunk in enumerate(chunks):
-                chunk_id = f"c{idx + 1}"
-                original_chunks.append({
-                    "chunk_id": chunk_id,
-                    "word": chunk["word"],
-                    "romaji": chunk["romaji"],
-                    "type": chunk["type"]
-                })
-                meaning = self.dictionary.get_meaning(chunk["word"], source_lang, target_lang)
-                chunk_meanings.append({chunk_id: meaning})
-            
+        for item in valid_items:            
             original_data.append({
                 "id": item["id"],
                 "box": item["box"],
-                "original_text": text,
-                "chunks": original_chunks
+                "original_text": item["original_text"]
             })
             
             translation_data.append({
-                "id": item["id"],
-                "full_translation": "",
-                "chunk_meanings": chunk_meanings
+                "id": item["id"]
             })
 
         lines_to_translate = "\n".join([f"[{item['id']}] {item['original_text']}" for item in valid_items])
@@ -75,7 +61,7 @@ class MangaTranslator:
         
         try:
             response = self.model.generate_content(
-                prompt,
+                [som_image, prompt],
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json",
                     response_schema=BatchTranslationResult,
@@ -86,17 +72,30 @@ class MangaTranslator:
             )
             result = json.loads(response.text)
             
-            translation_map = {t["id"]: t["full_translation"] for t in result.get("translations", [])}
+            translation_map = {t["id"]: t for t in result.get("translations", [])}
+
+            for o_data in original_data:
+                llm_result = translation_map.get(o_data["id"])
+                if llm_result:
+                    o_data["chunks"] = [{
+                        "chunk_id": c["chunk_id"],
+                        "word": c["word"],
+                        "romaji": c["romaji"],
+                        "type": c["type"]
+                    } for c in llm_result.get("chunks", [])]
+
             for t_data in translation_data:
-                t_data["full_translation"] = translation_map.get(t_data["id"], "")
+                llm_result = translation_map.get(t_data["id"])
+                if llm_result:
+                    t_data["full_translation"] = llm_result.get("full_translation", "")
+                    t_data["chunk_meanings"] = [{c["chunk_id"]: c["meaning_in_context"]} for c in llm_result.get("chunks", [])]
             
             logger.info(f"Successfully translated {len(valid_items)} items")
                 
         except Exception as e:
             logger.error(f"Translation failed: {str(e)}")
-            # Fallback: keep original text or empty
             for t_data in translation_data:
-                if not t_data["full_translation"]:
-                    t_data["full_translation"] = "[Translation Error]"
+                t_data["full_translation"] = t_data.get("full_translation", "[Translation Error]")
+                t_data["chunk_meanings"] = t_data.get("chunk_meanings", [])
                 
         return original_data, translation_data

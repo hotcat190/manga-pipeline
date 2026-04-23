@@ -103,3 +103,41 @@ class VisualDebugger:
         filepath = os.path.join(cls.OUTPUT_DIR, cls.SESSION_ID, filename)
         cv2.imwrite(filepath, canvas)
         print(f"[DEBUG] Visualized {len(blocks)} text blocks to {filepath}")
+
+    @classmethod
+    def visualize_obb(
+        cls, 
+        obb_boxes: List[np.ndarray], 
+        image: Union[np.ndarray, Image.Image], 
+        name: str = "obb_results"
+    ):
+        """
+        Visualize Oriented Bounding Boxes (OBB).
+        obb_boxes: List of numpy arrays, each of shape (4, 2) or (8,) representing corners.
+        """
+        if not cls.ENABLED:
+            return
+
+        cls._ensure_dir(cls.SESSION_ID)
+
+        if isinstance(image, Image.Image):
+            canvas = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        else:
+            canvas = image.copy()
+
+        for i, box in enumerate(obb_boxes):
+            # Reshape to (4, 1, 2) for cv2.polylines
+            pts = box.reshape((-1, 1, 2)).astype(np.int32)
+            cv2.polylines(canvas, [pts], isClosed=True, color=(255, 0, 0), thickness=2)
+            
+            label = f"#{i+1}"
+            cv2.putText(
+                canvas, label, tuple(pts[0][0]), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1
+            )
+
+        final_name = cls.CURRENT_CONTEXT if cls.CURRENT_CONTEXT else name
+        filename = f"{final_name}.png"
+        filepath = os.path.join(cls.OUTPUT_DIR, cls.SESSION_ID, filename)
+        cv2.imwrite(filepath, canvas)
+        print(f"[DEBUG] Visualized {len(obb_boxes)} OBBs to {filepath}")

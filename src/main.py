@@ -3,6 +3,7 @@ from typing import Dict, Optional
 from src.engines.factory import OcrFactory
 from src.services.translator import MangaTranslator
 from src.services.storage import BaseStorageService, StorageService
+from src.common.som_drawer import SomDrawer
 from src.common.config import settings
 
 # Configure logging
@@ -67,9 +68,14 @@ class MangaPipeline:
             source_lang = job_payload.get("source_lang", "ja")
             target_langs = job_payload.get("target_langs", ["vi"])
 
+            som_image = SomDrawer.draw(image_path, metadata)
+            #DEBUG: save som_image
+            som_image_url = self.storage.upload_image(som_image, f"processed/{job_id}/som_image.jpg")
+
             for lang in target_langs:
                 orig_data, trans_data = self.translator.translate_batch(
                     metadata,
+                    som_image=som_image,
                     source_lang=source_lang,
                     target_lang=lang
                 )
