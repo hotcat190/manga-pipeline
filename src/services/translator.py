@@ -40,7 +40,6 @@ class MangaTranslator:
         translation_data = []
         valid_items = [item for item in metadata if item["original_text"].strip()]
 
-        print("2. Bắt đầu dịch thuật chuyên sâu (Tap-to-Translate Pipeline)...\n")
         for item in valid_items:            
             original_data.append({
                 "id": item["id"],
@@ -70,7 +69,7 @@ class MangaTranslator:
                     top_k=64,
                 )
             )
-            result = json.loads(response.text)
+            result = json.loads(response.text)          
             
             translation_map = {t["id"]: t for t in result.get("translations", [])}
 
@@ -89,8 +88,6 @@ class MangaTranslator:
                 if llm_result:
                     t_data["full_translation"] = llm_result.get("full_translation", "")
                     t_data["chunk_meanings"] = [{c["chunk_id"]: c["meaning_in_context"]} for c in llm_result.get("chunks", [])]
-            
-            logger.info(f"Successfully translated {len(valid_items)} items")
                 
         except Exception as e:
             logger.error(f"Translation failed: {str(e)}")

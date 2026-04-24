@@ -61,6 +61,8 @@ class MangaPipeline:
                     }
                 }
 
+            logger.info("2. Bắt đầu dịch thuật chuyên sâu (Tap-to-Translate Pipeline)...\n")
+
             # 5. Handle Translations
             final_translations = {}
             original_metadata_full = {
