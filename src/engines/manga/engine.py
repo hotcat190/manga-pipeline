@@ -14,6 +14,7 @@ from .panel_detector import PanelDetector
 from .text_processor import TextProcessor
 from .bounding_box_sorter import BoundingBoxSorter
 from src.common.visual_debugger import VisualDebugger
+from src.common.position_debugger import PositionDebugger
 
 class MangaOcrEngine(BaseOcrEngine):
     def __init__(self):
@@ -27,6 +28,7 @@ class MangaOcrEngine(BaseOcrEngine):
         )
         self.mocr = MangaOcr()
         self.lama = SimpleLama()
+        self.bounding_box_sorter = BoundingBoxSorter()
 
     def process(self, image_path: str) -> Tuple[Image.Image, List[Dict]]:
         img_cv = cv2.imread(image_path)
@@ -35,14 +37,19 @@ class MangaOcrEngine(BaseOcrEngine):
         img_h, img_w = img_cv.shape[:2]
 
         # 1. Detect and sort panels
-        panels = self.panel_detector.detect_and_sort(image_path)
-        VisualDebugger.visualize_panels(panels, image=img_rgb, name="pipeline_panels")
+        panels = self.panel_detector.detect(image_path)
+        VisualDebugger.visualize_panels(panels, image=img_rgb, name="pipeline_panels_unsorted")
+        PositionDebugger.export_panels(panels=panels, name="panels_unsorted")
+
+        sorted_panels = self.bounding_box_sorter.sort(panels)
+        VisualDebugger.visualize_panels(sorted_panels, image=img_rgb, name="pipeline_panels_sorted")
+        PositionDebugger.export_panels(panels=panels, name="panels_sorted")
         
         # 2. Detect text blocks
         mask_raw, _, blk_list_raw = self.text_detector(img_cv, refine_mode=1, keep_undetected_mask=True)
 
         # 3. Assign and sort text blocks based on panels
-        blk_list_sorted = TextProcessor.assign_and_sort(blk_list_raw, panels)
+        blk_list_sorted = TextProcessor.assign_and_sort(blk_list_raw, sorted_panels)
 
         final_solid_mask = np.zeros((img_h, img_w), dtype=np.uint8)
         metadata = []
@@ -86,5 +93,6 @@ class MangaOcrEngine(BaseOcrEngine):
         cleaned_img = self.lama(img_pil, mask_pil)
 
         VisualDebugger.visualize_text_blocks(metadata, image=img_rgb, name="pipeline_text_blocks")
+        PositionDebugger.export_text_blocks(blocks=metadata)
 
         return cleaned_img, metadata

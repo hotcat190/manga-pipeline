@@ -1,6 +1,7 @@
 import statistics
 from collections import defaultdict
 from typing import List, Dict
+from functools import cmp_to_key
 
 class BoundingBoxSorter:
     """
@@ -75,7 +76,13 @@ class BoundingBoxSorter:
         if not h_gutters and not v_gutters:
             # No clean cut possible (overlapping boxes or complex layout)
             # Fallback to simple topological heuristic
-            data.sort(key=lambda x: (x['box'][1], -x['box'][2]))
+            def fallback_cmp(a, b):
+                y_overlap = min(a['box'][3], b['box'][3]) - max(a['box'][1], b['box'][1])
+                min_height = min(a['box'][3] - a['box'][1], b['box'][3] - b['box'][1])
+                if min_height > 0 and (y_overlap / min_height) > 0.5:
+                    return b['box'][2] - a['box'][2]
+                return a['box'][1] - b['box'][1]
+            data.sort(key=cmp_to_key(fallback_cmp))
             return data
             
         # Choose the "best" gutter

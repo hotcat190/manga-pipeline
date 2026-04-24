@@ -122,3 +122,21 @@ def test_4koma_layout():
     
     for i in range(8):
         assert sorted_panels[i]['box'] == expected_order[i], f"Mismatch at index {i}"
+
+def test_edge_case_1():
+    # Left panel is "higher" than the Right panel, but on the same row
+    panels = [
+        {'box': [7.0, 732.0, 265.0, 1585.0]}, # Left
+        {'box': [259.0, 761.0, 1014.0, 1486.0]}, # Right
+    ]
+
+    sorter = BoundingBoxSorter()
+    sorted_panels = sorter.sort(panels)
+
+    VisualDebugger.visualize_panels(sorted_panels)
+    expected_order = [
+        [259.0, 761.0, 1014.0, 1486.0],
+        [7.0, 732.0, 265.0, 1585.0]
+    ]
+    for i in range(len(panels)):
+        assert sorted_panels[i]['box'] == expected_order[i], f"Mismatch at index {i}"

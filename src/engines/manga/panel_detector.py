@@ -6,9 +6,8 @@ from .bounding_box_sorter import BoundingBoxSorter
 class PanelDetector:
     def __init__(self, model_path: str):
         self.model = YOLO(model_path)
-        self.sorter = BoundingBoxSorter()
 
-    def detect_and_sort(self, img_path: str) -> List[Dict]:
+    def detect(self, img_path: str) -> List[Dict]:
         results = self.model.predict(img_path, conf=0.3, verbose=False)
         panels = []
         for box in results[0].boxes:
@@ -19,4 +18,4 @@ class PanelDetector:
                 'cy': (coords[1] + coords[3]) / 2
             })
 
-        return self.sorter.sort(panels)
+        return panels
