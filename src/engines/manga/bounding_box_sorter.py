@@ -88,7 +88,7 @@ class BoundingBoxSorter:
         # Choose the "best" gutter
         # We prioritize the longest gutter. If tied, prefer horizontal (manga rows)
         best_gutter = None
-        max_score = -1
+        max_score = -float('inf')
         
         # Page bounds for scoring
         min_x = min(d['box'][0] for d in data)

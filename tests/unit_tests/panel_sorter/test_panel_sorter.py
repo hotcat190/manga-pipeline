@@ -140,3 +140,24 @@ def test_edge_case_1():
     ]
     for i in range(len(panels)):
         assert sorted_panels[i]['box'] == expected_order[i], f"Mismatch at index {i}"
+
+def test_mayonaka_0008_modified():    
+    panels = [
+        {'box': [259.0, 761.0, 1014.0, 1486.0]},
+        {'box': [94.0, 395.0, 1015.0, 718.0]}, 
+        {"box": [91.0, 0.0, 1018.0, 355.0]},
+        {"box": [7.0, 732.0, 255.0, 1585.0]} # 265 -> 255
+    ]
+
+    sorter = BoundingBoxSorter()
+    sorted_panels = sorter.sort(panels)
+
+    VisualDebugger.visualize_panels(sorted_panels)
+    expected_order = [
+        [91.0, 0.0, 1018.0, 355.0],
+        [94.0, 395.0, 1015.0, 718.0],
+        [259.0, 761.0, 1014.0, 1486.0],
+        [7.0, 732.0, 255.0, 1585.0]
+    ]
+    for i in range(len(panels)):
+        assert sorted_panels[i]['box'] == expected_order[i], f"Mismatch at index {i}"
