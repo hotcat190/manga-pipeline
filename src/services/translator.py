@@ -7,6 +7,7 @@ from PIL import Image
 from src.common.utils import get_full_lang_name
 from src.common.config import settings
 from src.services.prompts import TRANSLATION_PROMPT_TEMPLATE
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ class ChunkItem(BaseModel):
 
 class TranslatedItem(BaseModel):
     id: int
+    original_text: str
     full_translation: str
     chunks: List[ChunkItem]
 
@@ -64,12 +66,13 @@ class MangaTranslator:
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json",
                     response_schema=BatchTranslationResult,
-                    temperature=1,
-                    top_p=0.95,
-                    top_k=64,
+                    temperature=0.1,
+                    top_p=0.8,
+                    top_k=40,
                 )
             )
-            result = json.loads(response.text)          
+            print(response)  
+            result = json.loads(response.text)
             
             translation_map = {t["id"]: t for t in result.get("translations", [])}
 
@@ -90,7 +93,8 @@ class MangaTranslator:
                     t_data["chunk_meanings"] = [{c["chunk_id"]: c["meaning_in_context"]} for c in llm_result.get("chunks", [])]
                 
         except Exception as e:
-            logger.error(f"Translation failed: {str(e)}")
+            logger.error(f"Translation failed: ")
+            print(traceback.format_exc())
             for t_data in translation_data:
                 t_data["full_translation"] = t_data.get("full_translation", "[Translation Error]")
                 t_data["chunk_meanings"] = t_data.get("chunk_meanings", [])
