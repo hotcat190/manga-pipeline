@@ -6,10 +6,7 @@ shapely
 pyclipper
 tqdm
 
-# Deep Learning Frameworks
-torch
-torchvision
-torchaudio
+# Torch
 torchsummary
 
 # OCR & Inpainting
@@ -22,11 +19,6 @@ google-generativeai
 pydantic
 pydantic-settings
 python-dotenv
-
-# NLP
-sudachipy
-sudachidict_full
-pykakasi
 
 # RabbitMQ async processing
 aio-pika==9.4.1
