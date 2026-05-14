@@ -58,6 +58,8 @@ async def process_message(message: aio_pika.abc.AbstractIncomingMessage):
             error_payload = {
                 "job_id": body.get("job_id"),
                 "status": "FAILED",
+                "page_id": body.get("page_id"),
+                "chapter_id": body.get("chapter_id"),
                 "error": str(e)
             }
             await notify_webhook(webhook_url, error_payload)
