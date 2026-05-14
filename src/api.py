@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.consumer import start_rabbitmq_consumer
 
-RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672/")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://user:password@rabbitmq:5672/")
 QUEUE_NAME = os.getenv("QUEUE_NAME", "manga_processing_queue")
 
 @asynccontextmanager

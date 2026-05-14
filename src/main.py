@@ -113,7 +113,7 @@ class MangaPipeline:
                 "page_id": page_id,
                 "chapter_id": chapter_id,
                 "result": {
-                    "inpainted_image_url": img_url,
+                    "cleaned_img_url": img_url,
                     "metadata": {
                         "original_url": orig_url,
                         "translations": final_translations

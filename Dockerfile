@@ -13,11 +13,11 @@ RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir fastapi uvicorn python-multipart
 
-COPY ./src ./src
 COPY ./comic_text_detector ./comic_text_detector
 COPY ./models/comictextdetector.pt ./models/comictextdetector.pt
 COPY ./models/yolov12x_panels.pt ./models/yolov12x_panels.pt
 
+COPY ./src ./src
 
 EXPOSE 8000
 
