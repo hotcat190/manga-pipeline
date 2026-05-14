@@ -79,7 +79,7 @@ htmlcov/
 
 # Other
 planning/
-*.env.*
+*.env*
 !.env.example
 *.pt
 local_output/

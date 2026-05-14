@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11.9-slim
 
 WORKDIR /app
 
@@ -14,6 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir fastapi uvicorn python-multipart
 
 COPY ./src ./src
+COPY ./comic_text_detector ./comic_text_detector
+COPY ./models/comictextdetector.pt ./models/comictextdetector.pt
+COPY ./models/yolov12x_panels.pt ./models/yolov12x_panels.pt
+
 
 EXPOSE 8000
 

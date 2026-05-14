@@ -1,6 +1,6 @@
-`docker build --tag 'manga-pipeline:latest' .`
+`docker compose build`
 
-`docker run --detach 'manga-pipeline:latest'`
+`docker compose up -d`
 
 for installing requirements locally
 ```
