@@ -1,6 +1,6 @@
 from .base import BaseOcrEngine
 from .manga.engine import MangaOcrEngine
-from .webtoon_engine import WebtoonOcrEngine
+from .webtoon.webtoon_engine import WebtoonOcrEngine
 
 class OcrFactory:
     @staticmethod

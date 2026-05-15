@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from manga_ocr import MangaOcr
-from paddleocr import PaddleOCR
+from paddlex import create_pipeline
 from src.common.config import settings
 
 class OcrService:
@@ -10,8 +10,8 @@ class OcrService:
         self.mocr = MangaOcr()
         # Cache các instance PaddleOCR để tránh khởi tạo lại nhiều lần
         self.paddle_instances = {
-            'ko': PaddleOCR(use_angle_cls=True, lang='korean', show_log=False, use_gpu=False),
-            'zh': PaddleOCR(use_angle_cls=True, lang='ch', show_log=False, use_gpu=False)
+            'ko': create_pipeline(pipeline="OCR", text_rec_model="korean_PP-OCRv4_mobile_rec"),
+            'zh': create_pipeline(pipeline="OCR", text_rec_model="ch_PP-OCRv4_mobile_rec")
         }
 
     def recognize(self, image: Image.Image, lang: str) -> str:
@@ -22,16 +22,19 @@ class OcrService:
             try:
                 # PaddleOCR hoạt động tốt nhất với numpy array (RGB)
                 img_np = np.array(image.convert('RGB'))
-                ocr = self.paddle_instances[lang]
+                pipeline = self.paddle_instances[lang]
                 
                 # Thực hiện nhận diện
-                result = ocr.ocr(img_np, cls=True)
+                output = pipeline.predict(img_np)
                 
-                if not result or not result[0]:
-                    return ""
-                
-                # Trích xuất text từ kết quả (PaddleOCR trả về list các box và text)
-                texts = [line[1][0] for line in result[0]]
+                texts = []
+                for res in output:
+                    # Pipeline trả về generator, lấy dictionary thông qua thuộc tính json
+                    res_dict = res.json if hasattr(res, 'json') else res
+                    
+                    if 'rec_texts' in res_dict:
+                        texts.extend(res_dict['rec_texts'])
+                        
                 return " ".join(texts)
             except Exception as e:
                 print(f"Lỗi OCR {lang}: {e}")

@@ -13,8 +13,9 @@ torchsummary
 manga-ocr
 simple-lama-inpainting
 ultralytics
-paddleocr>=2.7.0
-paddlepaddle>=2.5.0
+paddleocr==3.5.0
+paddlepaddle==3.3.1
+paddlex==3.5.2 
 
 # AI & API
 google-generativeai
