@@ -3,6 +3,7 @@ from typing import Dict, Optional
 from src.engines.factory import OcrFactory
 from src.services.translator import MangaTranslator
 from src.services.storage import BaseStorageService, MinioStorageService
+from src.services.ocr import OcrService
 from src.common.som_drawer import SomDrawer
 from src.common.config import settings
 
@@ -15,9 +16,10 @@ logger = logging.getLogger(__name__)
 
 class MangaPipeline:
     def __init__(self, storage_service: Optional[BaseStorageService] = None):
+        self.ocr_service = OcrService()
         self.engines = {
-            'manga': OcrFactory.get_engine('manga'),
-            'webtoon': OcrFactory.get_engine('webtoon')
+            'manga': OcrFactory.get_engine('manga', ocr_service=self.ocr_service),
+            'webtoon': OcrFactory.get_engine('webtoon', ocr_service=self.ocr_service)
         }
         self.translator = MangaTranslator()
         self.storage = self.storage = storage_service or MinioStorageService(bucket_name=settings.DEFAULT_BUCKET_NAME)
@@ -41,7 +43,8 @@ class MangaPipeline:
             if not image_path:
                 raise ValueError("Missing 'image_path' in payload")
 
-            cleaned_img, metadata = engine.process(image_path)
+            source_lang = job_payload.get("source_lang", "ja")
+            cleaned_img, metadata = engine.process(image_path, source_lang)
             
             # 3. Upload Cleaned Image
             img_url = self.storage.upload_image(cleaned_img, f"processed/{job_id}/clean.jpg")

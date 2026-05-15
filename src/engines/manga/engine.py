@@ -5,7 +5,6 @@ from PIL import Image
 from typing import Tuple, List, Dict
 
 from comic_text_detector.inference import TextDetector
-from manga_ocr import MangaOcr
 from simple_lama_inpainting import SimpleLama
 
 from src.engines.base import BaseOcrEngine
@@ -26,7 +25,7 @@ class MangaOcrEngine(BaseOcrEngine):
             device=device, 
             act='leaky'
         )
-        self.mocr = MangaOcr()
+        self.ocr_service = kwargs.get('ocr_service')
         self.lama = SimpleLama()
         self.bounding_box_sorter = BoundingBoxSorter()
 
@@ -77,7 +76,7 @@ class MangaOcrEngine(BaseOcrEngine):
 
             # 6. OCR
             try: 
-                text = self.mocr(img_pil.crop((x_min, y_min, x_max, y_max)))
+                text = self.ocr_service.recognize(img_pil.crop((x_min, y_min, x_max, y_max)))
             except Exception: 
                 text = ""
 
