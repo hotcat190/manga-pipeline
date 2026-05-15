@@ -33,7 +33,7 @@ curl -X POST "http://localhost:8080/comic/comics" \
   -F "genres=4" \
   -F "genres=6" \
   -F "genres=10" \
-  -F "coverImage=@D:\uet\_duan\code\manga-pipeline\tests\assets\mayonaka\c1\0000.jpg"
+  -F "coverImage=@/d/uet/_duan/code/manga-pipeline/tests/assets/mayonaka/c1/0000.jpg"
 ```
 
 ```bash
@@ -75,6 +75,6 @@ curl -X POST "http://localhost:8080/comic/chapters/11/pages?startPageNumber=1&ta
   -H "Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJobGtsb25nYTVAZ21haWwuY29tIiwiaWF0IjoxNzc4ODQxNjIyLCJleHAiOjE3Nzg5MjgwMjJ9.-4cWodAFdJrvgXZyivVNZjNl3PBrnVZQo_oNFk3H77lbm9qLggSsjT4m6JoTGX27" \
   -F "files=@D:\uet\_duan\code\manga-pipeline\tests\assets\mayonaka\c1\0008.jpg" \
   -F "files=@D:\uet\_duan\code\manga-pipeline\tests\assets\mayonaka\c1\0009.jpg" \
-  -F "files=@D:\uet\_duan\code\manga-pipeline\tests\assets\mayonaka\c1\0010.jpg" \
+  -F "files=@D:\uet\_duan\code\manga-pipeline\tests\assets\mayonaka\c1\0010.jpg"
 ```
 

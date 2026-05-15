@@ -10,6 +10,7 @@ Analyze and translate the provided {source_lang} dialogue into idiomatic {target
 3. The Verb Exception: Treat conjugated verbs as a single atomic chunk (e.g., "聞いている" stays together). You must state the exact conjugation form (e.g., "-te iru form") in the meaning explanation.
 4. Manga Expressions: Attach elongated sounds to their base word. Ensure context is inferred from the Set-of-Mark image.
 5. Context is Key: Provide the romaji, grammatical role, and the specific meaning of each chunk AS USED IN THIS CONTEXT, not just the dictionary form.
+6. Output Language Constraint: The values for `full_translation`, `type`, and `meaning_in_context` MUST be written entirely in {target_lang}. Do NOT use English for explanations or grammatical types unless {target_lang} is English.
 </Rules>
 
 <InputText>
