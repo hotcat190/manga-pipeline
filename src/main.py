@@ -72,8 +72,7 @@ class MangaPipeline:
                 "page_id": page_id,
                 "bubbles": []
             }
-
-            source_lang = job_payload.get("source_lang", "ja")
+            
             target_langs = job_payload.get("target_langs", ["vi"])
 
             som_image = SomDrawer.draw(image_path, metadata)
