@@ -21,9 +21,11 @@ async def notify_webhook(webhook_url: str, payload: dict):
     async with httpx.AsyncClient() as client:
         await client.post(webhook_url, json=payload)
 
-async def process_message(message: aio_pika.abc.AbstractIncomingMessage):
+async def process_message(message: aio_pika.abc.AbstractIncomingMessage):    
     async with message.process():
         body = json.loads(message.body.decode())
+
+        print(f'Processing message: {body}')
         
         image_url = body.get("image_url")
         webhook_url = body.get("webhook_url")

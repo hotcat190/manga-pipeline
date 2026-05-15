@@ -30,3 +30,6 @@ requests
 
 # Test
 pytest
+
+# Minio
+minio==7.2.5

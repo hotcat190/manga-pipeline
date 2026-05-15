@@ -22,3 +22,5 @@ async def health_check():
         "queue": QUEUE_NAME
     }
 
+print('Pipeline service started')
+

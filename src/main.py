@@ -2,7 +2,7 @@ import logging
 from typing import Dict, Optional
 from src.engines.factory import OcrFactory
 from src.services.translator import MangaTranslator
-from src.services.storage import BaseStorageService, StorageService
+from src.services.storage import BaseStorageService, MinioStorageService
 from src.common.som_drawer import SomDrawer
 from src.common.config import settings
 
@@ -20,7 +20,7 @@ class MangaPipeline:
             'webtoon': OcrFactory.get_engine('webtoon')
         }
         self.translator = MangaTranslator()
-        self.storage = storage_service or StorageService(bucket_name=settings.DEFAULT_BUCKET_NAME)
+        self.storage = self.storage = storage_service or MinioStorageService(bucket_name=settings.DEFAULT_BUCKET_NAME)
 
     def process_job(self, job_payload: Dict) -> Dict:
         job_id = job_payload.get("job_id")
@@ -130,7 +130,3 @@ class MangaPipeline:
                 "chapter_id": chapter_id,
                 "error": str(e)
             }
-
-def process_job(job_payload: Dict) -> Dict:
-    """Wrapper function to maintain backward compatibility if needed."""
-    return pipeline.process_job(job_payload)
