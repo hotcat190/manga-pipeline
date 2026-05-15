@@ -4,7 +4,7 @@ from .webtoon_engine import WebtoonOcrEngine
 
 class OcrFactory:
     @staticmethod
-    def get_engine(comic_type: str) -> BaseOcrEngine:
+    def get_engine(comic_type: str, **kwargs) -> BaseOcrEngine:
         if comic_type == 'webtoon':
-            return WebtoonOcrEngine()
-        return MangaOcrEngine()
+            return WebtoonOcrEngine(**kwargs)
+        return MangaOcrEngine(**kwargs)

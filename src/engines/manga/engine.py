@@ -17,7 +17,7 @@ from src.common.visual_debugger import VisualDebugger
 from src.common.position_debugger import PositionDebugger
 
 class MangaOcrEngine(BaseOcrEngine):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.panel_detector = PanelDetector(settings.PANEL_MODEL_PATH)
         
         device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -30,7 +30,7 @@ class MangaOcrEngine(BaseOcrEngine):
         self.lama = SimpleLama()
         self.bounding_box_sorter = BoundingBoxSorter()
 
-    def process(self, image_path: str) -> Tuple[Image.Image, List[Dict]]:
+    def process(self, image_path: str, source_lang: str) -> Tuple[Image.Image, List[Dict]]:
         img_cv = cv2.imread(image_path)
         img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
         img_pil = Image.fromarray(img_rgb)

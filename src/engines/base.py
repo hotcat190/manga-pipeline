@@ -4,5 +4,5 @@ from PIL import Image
 
 class BaseOcrEngine(ABC):
     @abstractmethod
-    def process(self, image_path: str) -> Tuple[Image.Image, List[Dict]]:
+    def process(self, image_path: str, source_lang: str) -> Tuple[Image.Image, List[Dict]]:
         pass
