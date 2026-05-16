@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     MINIO_PUBLIC_BASE_URL: str = Field("http://localhost:9000/comic", env="MINIO_PUBLIC_BASE_URL")
     
     # AI Model Config
-    GEMINI_MODEL_NAME: str = Field("gemini-3.1-flash-lite-preview", env="GEMINI_MODEL_NAME")
+    GEMINI_MODEL_NAME: str = Field("gemini-3.1-flash-lite", env="GEMINI_MODEL_NAME")
     
     # App Config
     DEBUG: bool = Field(False, env="DEBUG")

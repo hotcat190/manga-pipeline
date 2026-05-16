@@ -67,9 +67,10 @@ class MangaTranslator:
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json",
                     response_schema=BatchTranslationResult,
+                    max_output_tokens=65536,
                     temperature=0.1,
                     top_p=0.8,
-                    top_k=40,
+                    top_k=40,              
                 )
             )
             logger.info(response)  
