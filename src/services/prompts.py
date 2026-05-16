@@ -5,7 +5,7 @@ Analyze and translate the provided {source_lang} dialogue into idiomatic {target
 </Role>
 
 <Rules>
-1. Absolute Completeness: Tokenize EVERY SINGLE CHARACTER from the `original_text`. You must include speaker names (e.g., "みにゃ"), punctuation (e.g., "：", "！"), and symbols. Zero characters can be skipped or dropped.
+1. Absolute Completeness: Tokenize EVERY SINGLE CHARACTER from the `original_text`. You must include speaker names, punctuation (e.g., "：", "！"), and symbols. Zero characters can be skipped or dropped.
 2. Strict Boundaries & No Phrases: Split text into specific parts of speech (noun, particle, verb, punctuation). You must split compound nouns (e.g., "学園併合" -> "学園" and "併合") and separate nouns from particles (e.g., "併合に伴い" -> "併合", "に", "伴い"). The grammatical role "phrase" is STRICTLY FORBIDDEN.
 3. The Verb Exception: Treat conjugated verbs as a single atomic chunk (e.g., "聞いている" stays together). You must state the exact conjugation form (e.g., "-te iru form") in the meaning explanation.
 4. Manga Expressions: Attach elongated sounds to their base word. Ensure context is inferred from the Set-of-Mark image.

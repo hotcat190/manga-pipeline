@@ -40,13 +40,13 @@ class MangaTranslator:
         
         original_data = []
         translation_data = []
-        valid_items = [item for item in metadata if item["original_text"].strip()]
+        valid_items = metadata
 
         for item in valid_items:            
             original_data.append({
                 "id": item["id"],
                 "box": item["box"],
-                "original_text": item["original_text"]
+                "original_text": item.get("original_text", "")
             })
             
             translation_data.append({
@@ -59,6 +59,7 @@ class MangaTranslator:
             target_lang=full_target_lang,
             input_text=lines_to_translate
         )
+        logger.info(f"Prompt: \n{prompt}")
         
         try:
             response = self.model.generate_content(
@@ -71,7 +72,7 @@ class MangaTranslator:
                     top_k=40,
                 )
             )
-            print(response)  
+            logger.info(response)  
             result = json.loads(response.text)
             
             translation_map = {t["id"]: t for t in result.get("translations", [])}
@@ -79,6 +80,8 @@ class MangaTranslator:
             for o_data in original_data:
                 llm_result = translation_map.get(o_data["id"])
                 if llm_result:
+                    if not o_data.get("original_text", "").strip() and llm_result.get("original_text"):
+                        o_data["original_text"] = llm_result["original_text"]
                     o_data["chunks"] = [{
                         "chunk_id": c["chunk_id"],
                         "word": c["word"],
