@@ -44,10 +44,15 @@ class MangaPipeline:
                 raise ValueError("Missing 'image_path' in payload")
 
             source_lang = job_payload.get("source_lang", "ja")
+
+            logger.info(f"Performing Inpainting & OCR for source_lang: {source_lang}")
             cleaned_img, metadata = engine.process(image_path, source_lang)
+
+            logger.info(f"Successful OCR: \n{metadata}")
             
             # 3. Upload Cleaned Image
             img_url = self.storage.upload_image(cleaned_img, f"processed/{job_id}/clean.jpg")
+            logger.info(f"Cleaned image uploaded at {img_url}")
 
             # 4. (Optional) Skip translation
             skip_translate = job_payload.get("skip_translate", False)
