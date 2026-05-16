@@ -86,8 +86,7 @@ class MangaTranslator:
                     o_data["chunks"] = [{
                         "chunk_id": c["chunk_id"],
                         "word": c["word"],
-                        "romanization": c["romanization"],
-                        "type": c["type"]
+                        "romanization": c["romanization"]                        
                     } for c in llm_result.get("chunks", [])]
 
             for t_data in translation_data:
@@ -95,6 +94,11 @@ class MangaTranslator:
                 if llm_result:
                     t_data["full_translation"] = llm_result.get("full_translation", "")
                     t_data["chunk_meanings"] = [{c["chunk_id"]: c["meaning_in_context"]} for c in llm_result.get("chunks", [])]
+                    t_data["chunk_meanings"] = [{
+                        "chunk_id": c["chunk_id"],
+                        "type": c.get("type", ""),
+                        "meaning": c.get("meaning_in_context", "")
+                    } for c in llm_result.get("chunks", [])]
                 
         except Exception as e:
             logger.error(f"Translation failed: ")
