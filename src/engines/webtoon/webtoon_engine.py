@@ -1,15 +1,12 @@
 import cv2
 import numpy as np
-import torch
 from PIL import Image
 from typing import Tuple, List, Dict
 
-from comic_text_detector.inference import TextDetector
 from simple_lama_inpainting import SimpleLama
 
 from src.engines.base import BaseOcrEngine
 from src.common.config import settings
-from src.engines.manga.text_processor import TextProcessor
 from src.common.visual_debugger import VisualDebugger
 from src.common.position_debugger import PositionDebugger
 
@@ -22,8 +19,12 @@ class WebtoonBoxSorter:
         thì sort từ trái qua phải (trục X).
         """
         def get_rect(blk):
-            bx, by, bw, bh = [int(val.item()) for val in blk.bounding_rect()]
-            return bx, by, bw, bh
+            poly = blk["poly"]
+            x_coords = [p[0] for p in poly]
+            y_coords = [p[1] for p in poly]
+            x_min, y_min = int(min(x_coords)), int(min(y_coords))
+            bw, bh = int(max(x_coords)) - x_min, int(max(y_coords)) - y_min
+            return x_min, y_min, bw, bh
             
         blocks_with_rect = [(blk, get_rect(blk)) for blk in blk_list_raw]
         
@@ -36,13 +37,6 @@ class WebtoonBoxSorter:
 
 class WebtoonOcrEngine(BaseOcrEngine):
     def __init__(self, **kwargs):
-        # 1. Bỏ qua PanelDetector, chỉ dùng TextDetector
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.text_detector = TextDetector(
-            model_path=settings.TEXT_DETECTION_MODEL_PATH, 
-            device=device, 
-            act='leaky'
-        )
         self.ocr_service = kwargs.get('ocr_service')
         self.lama = SimpleLama()
 
@@ -53,10 +47,10 @@ class WebtoonOcrEngine(BaseOcrEngine):
         img_h, img_w = img_cv.shape[:2]
 
         # 2. Text Detection
-        mask_raw, _, blk_list_raw = self.text_detector(img_cv, refine_mode=1, keep_undetected_mask=True)
+        raw_ocr_results = self.ocr_service.recognize_full_page(img_pil, source_lang)
 
         # 3. Sorting theo Webtoon Logic
-        blk_list_sorted = WebtoonBoxSorter.sort(blk_list_raw)
+        blk_list_sorted = WebtoonBoxSorter.sort(raw_ocr_results)
 
         final_solid_mask = np.zeros((img_h, img_w), dtype=np.uint8)
         metadata = []
@@ -64,32 +58,16 @@ class WebtoonOcrEngine(BaseOcrEngine):
 
         # 4. Processing, Masking & OCR
         for blk in blk_list_sorted:
-            bx, by, bw, bh = [int(val.item()) for val in blk.bounding_rect()]
+            poly = blk["poly"]
+            text = blk["text"]
 
-            pad_l, pad_r, pad_t, pad_b = 5, 20, 15, 5
-            x_min, y_min = max(0, bx - pad_l), max(0, by - pad_t)
-            x_max, y_max = min(img_w, bx + bw + pad_r), min(img_h, by + bh + pad_b)
+            x_coords = [p[0] for p in poly]
+            y_coords = [p[1] for p in poly]
+            x_min, y_min = max(0, int(min(x_coords))), max(0, int(min(y_coords)))
+            x_max, y_max = min(img_w, int(max(x_coords))), min(img_h, int(max(y_coords)))
 
-            # Lọc vùng không hợp lệ (tái sử dụng từ Manga)
-            if not TextProcessor.is_valid_text_region(img_cv, (x_min, y_min, x_max, y_max)):
-                continue
-
-            # Xây dựng inpainting mask
-            roi_mask = mask_raw[y_min:y_max, x_min:x_max]
-            contours, _ = cv2.findContours(roi_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            if contours:
-                all_pts = np.vstack(contours)
-                hull_offset = cv2.convexHull(all_pts) + [x_min, y_min]
-                cv2.drawContours(final_solid_mask, [hull_offset], -1, 255, -1)
-                cv2.drawContours(final_solid_mask, [hull_offset], -1, 255, 3)
-
-            # Gọi OCR thông qua OcrService đa ngôn ngữ
-            try: 
-                img_crop = img_pil.crop((x_min, y_min, x_max, y_max))
-                text = self.ocr_service.recognize(img_crop, source_lang)
-            except Exception as e: 
-                print(f"Lỗi OCR tại box {box_id}: {e}")
-                text = ""
+            poly_np = np.array(poly, dtype=np.int32).reshape((-1, 1, 2))
+            cv2.fillPoly(final_solid_mask, [poly_np], 255)
 
             # Build metadata (giữ nguyên format)
             metadata.append({
@@ -98,6 +76,10 @@ class WebtoonOcrEngine(BaseOcrEngine):
                 "original_text": text
             })
             box_id += 1
+            
+        if len(blk_list_sorted) > 0:
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
+            final_solid_mask = cv2.dilate(final_solid_mask, kernel, iterations=1)
 
         # Inpaint xóa chữ
         mask_pil = Image.fromarray(final_solid_mask)

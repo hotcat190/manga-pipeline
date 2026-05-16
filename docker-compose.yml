@@ -24,6 +24,8 @@ services:
       MINIO_SECRET_KEY: "${MINIO_SECRET_KEY:-password123}"
       MINIO_PUBLIC_BASE_URL: "http://localhost:9000/comic"
       HF_TOKEN: "${HF_TOKEN}"
+      FLAGS_use_mkldnn: "0"
+      PADDLE_PDX_ENABLE_MKLDNN_BYDEFAULT: "0"
     ports:
       - "8000:8000"
     depends_on:
