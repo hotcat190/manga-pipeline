@@ -27,28 +27,6 @@ class OcrService:
             return self.mocr(image)
         
         if lang in self.rec_models:
-            try:
-                # PaddleOCR hoạt động tốt nhất với numpy array (RGB)
-                img_np = np.array(image.convert('RGB'))
-
-                model = self.rec_models[lang]
-                output = model.predict(img_np)
-                
-                texts = []
-                for res in output:
-                    res.print()
-                    res_dict = res.json if hasattr(res, 'json') else res
-                    logger.info(f"res_dict: {res_dict}")
-                    # Pipeline text_recognition thường trả về 'rec_text' (chuỗi) hoặc 'rec_texts' (mảng)
-                    if 'rec_text' in res_dict and isinstance(res_dict['rec_text'], str):
-                        texts.append(res_dict['rec_text'])
-                    elif 'rec_texts' in res_dict:
-                        texts.extend(res_dict['rec_texts'])
-                        
-                    res.save_to_img("/local_output/")
-                return " ".join(texts)
-            except Exception as e:
-                print(f"Lỗi OCR {lang}: {e}")
-                return ""
+            raise NotImplementedError(f"OcrService.recognize for lang {lang} is not supported")
             
         return ""

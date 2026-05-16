@@ -17,3 +17,13 @@ pip install --no-cache-dir torch torchvision torchaudio --index-url https://down
 pip install --no-cache-dir -r requirements.txt
 pip install --no-cache-dir fastapi uvicorn python-multipart
 ```
+
+set env
+```
+$env:DEBUG_VISUALIZE="1";
+$env:FLAGS_use_mkldnn="0"
+$env:PADDLE_PDX_ENABLE_MKLDNN_BYDEFAULT="0"
+```
+
+run locally
+`uvicorn src.api:app --host 0.0.0.0 --port 8080`

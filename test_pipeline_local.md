@@ -1,1 +1,2 @@
-python .\tests\test_pipeline.py --image IMAG01_4.jpg --source-lang ko --target-langs vi --target-langs en
+python .\tests\test_pipeline.py --image IMAG01_4.jpg --source-lang ko --target-langs vi en --comic-type webtoon
+python .\tests\test_pipeline.py --image IMAG01_4.jpg --source-lang ko --target-langs vi en --comic-type webtoon --no-translate

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class ChunkItem(BaseModel):
     chunk_id: str
     word: str
-    romaji: str
+    romanization: str
     type: str
     meaning_in_context: str
 
@@ -75,6 +75,7 @@ class MangaTranslator:
             logger.info(response)  
             result = json.loads(response.text)
             
+            logger.info(f"============================ Translation result \n{result}")
             translation_map = {t["id"]: t for t in result.get("translations", [])}
 
             for o_data in original_data:
@@ -85,7 +86,7 @@ class MangaTranslator:
                     o_data["chunks"] = [{
                         "chunk_id": c["chunk_id"],
                         "word": c["word"],
-                        "romaji": c["romaji"],
+                        "romanization": c["romanization"],
                         "type": c["type"]
                     } for c in llm_result.get("chunks", [])]
 

@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Dict, Optional
 from src.engines.factory import OcrFactory
 from src.services.translator import MangaTranslator
@@ -13,6 +14,8 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+DEBUG = os.getenv("DEBUG_VISUALIZE", "0") == "1"
 
 class MangaPipeline:
     def __init__(self, storage_service: Optional[BaseStorageService] = None):
@@ -47,7 +50,7 @@ class MangaPipeline:
 
             logger.info(f"Performing Inpainting & OCR for source_lang: {source_lang}")
             cleaned_img, metadata = engine.process(image_path, source_lang)
-
+            
             logger.info(f"Successful OCR: \n{metadata}")
             
             # 3. Upload Cleaned Image
@@ -82,7 +85,8 @@ class MangaPipeline:
 
             som_image = SomDrawer.draw(image_path, metadata)
             #DEBUG: save som_image
-            som_image_url = self.storage.upload_image(som_image, f"processed/{job_id}/som_image.jpg")
+            if DEBUG:
+                som_image_url = self.storage.upload_image(som_image, f"processed/{job_id}/som_image.jpg")
 
             for lang in target_langs:
                 orig_data, trans_data = self.translator.translate_batch(
