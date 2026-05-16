@@ -76,7 +76,7 @@ class MangaOcrEngine(BaseOcrEngine):
 
             # 6. OCR
             try: 
-                text = self.ocr_service.recognize(img_pil.crop((x_min, y_min, x_max, y_max)))
+                text = self.ocr_service.recognize(img_pil.crop((x_min, y_min, x_max, y_max)), source_lang)
             except Exception: 
                 text = ""
 
