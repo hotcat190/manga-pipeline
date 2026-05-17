@@ -23,11 +23,5 @@ class Settings(BaseSettings):
     
     # App Config
     DEBUG: bool = Field(False, env="DEBUG")
-    
-    model_config = SettingsConfigDict(
-        env_file=".env.local.test",
-        env_file_encoding="utf-8",
-        extra="ignore"
-    )
 
 settings = Settings()
