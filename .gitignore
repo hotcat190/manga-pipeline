@@ -58,6 +58,7 @@ docs/_build/
 venv/
 ENV/
 env/
+venv_*
 
 # IDEs
 .vscode/

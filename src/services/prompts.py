@@ -14,7 +14,7 @@ No Task Skipping (CRITICAL): You MUST strictly generate the `full_translation` a
 Strict Boundaries & No Phrases: Split text into specific parts of speech (noun, particle, verb, punctuation). You must split compound nouns and separate nouns from particles. The grammatical role "phrase" is STRICTLY FORBIDDEN.
 The Verb Exception: Treat conjugated verbs as a single atomic chunk. You must state the exact conjugation form in the meaning explanation.
 Manga/Webtoon Expressions: Attach elongated sounds to their base word.
-Context is Key: Provide the romanization, grammatical role, and the specific meaning of each chunk AS USED IN THIS CONTEXT. The `meaning_in_context` and `full_translation` values MUST be written entirely in {target_lang}.
+Context is Key: Provide the romanization, grammatical role, and the specific meaning of each chunk AS USED IN THIS CONTEXT. The `full_translation`, `meaning_in_context`, and chunks' `type` values MUST be written entirely in {target_lang}.
 A Set-of-Mark image is provided, marking EACH text block on the image with a Magenta Rectangle. Use the image SOLELY to infer context surrounding the dialogues. The correct text blocks to be analyzed and translated is already provided in the InputText tag.
 </Rules>
 

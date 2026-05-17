@@ -51,12 +51,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test Manga Pipeline")
     parser.add_argument("--image", type=str, default="0008.jpg", help="Tên file ảnh trong thư mục tests/assets/")
     parser.add_argument("--source-lang", type=str, default="ja", help="Ngôn ngữ gốc")
-    parser.add_argument("--target-langs", nargs="*", default=["en"], help="Danh ngôn ngữ đích, ngăn cách bởi dấu \" \"")
+    parser.add_argument("--target-langs", nargs="*", default=["en","vi"], help="Danh ngôn ngữ đích, ngăn cách bởi dấu \" \"")
     parser.add_argument("--comic-type", type=str, default="manga")
     parser.add_argument("--no-translate", action="store_true", help="Bỏ qua bước dịch thuật (chỉ chạy OCR + inpainting)")
     args = parser.parse_args()
 
-    env_path = os.path.join(os.path.dirname(__file__), '..', '.env.local.test')
+    env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
     load_dotenv(dotenv_path=env_path)
     
     if not os.environ.get("GEMINI_API_KEY"):

@@ -9,9 +9,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir fastapi uvicorn python-multipart
+RUN pip install --no-cache-dir -U torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir -U -r requirements.txt
 
 COPY ./comic_text_detector ./comic_text_detector
 COPY ./models/comictextdetector.pt ./models/comictextdetector.pt
