@@ -41,7 +41,7 @@ class TextProcessor:
         return final_sorted_blocks
 
     @staticmethod
-    def is_valid_text_region(img_cv: np.ndarray, box: Tuple[int, int, int, int], threshold: float = 0.45) -> bool:
+    def is_valid_text_region(img_cv: np.ndarray, box: Tuple[int, int, int, int], threshold: float = 0.2) -> bool:
         x_min, y_min, x_max, y_max = box
         roi_gray = cv2.cvtColor(img_cv[y_min:y_max, x_min:x_max], cv2.COLOR_BGR2GRAY)
         total_pixels = roi_gray.shape[0] * roi_gray.shape[1]
