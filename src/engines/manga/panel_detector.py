@@ -1,7 +1,14 @@
 import numpy as np
+import logging
 from ultralytics import YOLO
 from typing import List, Dict
 from .bounding_box_sorter import BoundingBoxSorter
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class PanelDetector:
     def __init__(self, model_path: str):
@@ -9,6 +16,8 @@ class PanelDetector:
 
     def detect(self, img_path: str) -> List[Dict]:
         results = self.model.predict(img_path, conf=0.3, verbose=False)
+        logger.info(f"Panel Detector predict result len: {len(results)} ")
+        logger.info(f"Panel Detector first result boxes len: {len(results[0].boxes)} ")
         panels = []
         for box in results[0].boxes:
             coords = box.xyxy[0].cpu().numpy()
