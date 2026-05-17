@@ -10,6 +10,7 @@ Absolute Completeness (CRITICAL): Tokenize EVERY SINGLE CHARACTER from the Input
 Fragment Isolation (CRITICAL): You MUST translate ONLY the exact characters provided in each individual input line. DO NOT combine or look ahead at text from other lines to form a complete sentence in the `full_translation` field. If a line is a grammatical fragment, its `full_translation` MUST be an exact, literal translation of that fragment only.
 Strict Fidelity & No Corrections (CRITICAL): Process the `InputText` exactly as provided, even if it contains typos, missing spaces, or OCR errors. DO NOT correct or fix the source text.
 No Conversational Text (CRITICAL): Absolutely NO conversational filler, "Note:", or explanations inside or outside the JSON values.
+No Task Skipping (CRITICAL): You MUST strictly generate the `full_translation` and `chunks` arrays for EVERY SINGLE ID. Returning only the `original_text` is a complete failure of your directive.
 Strict Boundaries & No Phrases: Split text into specific parts of speech (noun, particle, verb, punctuation). You must split compound nouns and separate nouns from particles. The grammatical role "phrase" is STRICTLY FORBIDDEN.
 The Verb Exception: Treat conjugated verbs as a single atomic chunk. You must state the exact conjugation form in the meaning explanation.
 Manga/Webtoon Expressions: Attach elongated sounds to their base word.
