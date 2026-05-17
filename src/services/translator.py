@@ -102,7 +102,7 @@ class MangaTranslator:
                     } for c in llm_result.get("chunks", [])]
                 
         except Exception as e:
-            logger.error(f"Translation failed: ")
+            logger.error(f"Translation failed: {e}")
             print(traceback.format_exc())
             for t_data in translation_data:
                 t_data["full_translation"] = t_data.get("full_translation", "[Translation Error]")
